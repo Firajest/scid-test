@@ -9,10 +9,10 @@ const placeholderSvg = `
   <path d="M16 16l-4-4-4 4"/>
 </svg>
 `;
+
 function renderUsers(usersToRender) {
   const container = document.getElementById('users-list');
   container.innerHTML = '';
-
 
   usersToRender.forEach(user => {
     const photoUrl = user.photo || `data:image/svg+xml;utf8,${encodeURIComponent(placeholderSvg)}`;
@@ -36,7 +36,7 @@ function renderUsers(usersToRender) {
 
   // Обработчики загрузки фото
   document.querySelectorAll('.user-card__upload-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const userId = this.dataset.userId;
       const input = document.querySelector(`.user-card__upload-input[data-user-id="${userId}"]`);
       input?.click();
@@ -55,7 +55,7 @@ function handlePhotoUpload(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     const user = users.find(u => u.id === userId);
     if (user) {
       user.photo = e.target.result;
@@ -68,25 +68,14 @@ function handlePhotoUpload(event) {
 function sortUsers(usersArray, sortOption) {
   if (!sortOption) return usersArray;
 
+  const [fieldName, format] = sortOption.split('-');
+
   return [...usersArray].sort((a, b) => {
-    if (sortOption === 'name-asc') {
-      return a.firstName.localeCompare(b.firstName, 'ru');
-    }
-    if (sortOption === 'name-desc') {
-      return b.firstName.localeCompare(a.firstName, 'ru');
-    }
-    if (sortOption === 'lastName-asc') {
-      return a.lastName.localeCompare(b.lastName, 'ru');
-    }
-    if (sortOption === 'lastName-desc') {
-      return b.lastName.localeCompare(a.lastName, 'ru');
-    }
-    if (sortOption === 'age-asc') {
-      return a.age - b.age;
-    }
-    if (sortOption === 'age-desc') {
-      return b.age - a.age;
-    }
+    if (format === 'asc') return a[fieldName].localeCompare(b[fieldName], 'ru');
+    if (format === 'desc') return b[fieldName].localeCompare(a[fieldName], 'ru');
+    if (sortOption === 'age-asc') return a.age - b.age;
+    if (sortOption === 'age-desc') return b.age - a.age;
+
     return 0;
   });
 }
